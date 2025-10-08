@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Brand tokens - tiện dùng ở nơi không tiện utility */
+:root{
+  --brand-ice:  #62dddd;
+  --brand-cyan: #2aa7a7;
+  --brand-mint: #28b793;
+  --brand-sun:  #f5bf52;
+  --brand-amber:#fac423;
+  --ink:        #0D2438;
+}
+
+/* Components nhỏ tái sử dụng */
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-xl2 font-semibold transition-all shadow-soft;
+}
+.btn-primary {
+  background-image: linear-gradient(135deg, var(--brand-mint), var(--brand-cyan));
+  color: var(--ink);
+  box-shadow: 0 10px 25px rgba(51,255,204,0.25);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-outline {
+  @apply border border-[var(--brand-mint)] text-[color:var(--ink)] bg-white/60 backdrop-blur;
+}
+.card {
+  @apply rounded-xl2 bg-white/70 backdrop-blur shadow-soft border border-white/50;
+}
+.badge {
+  @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm;
+  background-image: linear-gradient(135deg, var(--brand-amber), var(--brand-sun));
+  color: var(--ink);
+}

@@ -1,0 +1,35 @@
+// import express from 'express';
+// import dotenv from 'dotenv';
+// import cors from 'cors';
+// import cookieParser from 'cookie-parser';
+// import { connectDB } from './db.js';
+// import authRoutes from './routes/auth.routes.js';
+// import surveyRoutes from './routes/survey.routes.js';
+// import responseRoutes from './routes/response.routes.js';
+// import { errorHandler } from './middleware/error.js';
+
+// dotenv.config();
+// const app = express();
+
+// app.use(express.json());
+// app.use(cookieParser());
+// app.use(cors({
+//   origin: process.env.CORS_ORIGIN?.split(',') || true,
+//   credentials: true
+// }));
+
+// app.get('/', (req, res) => res.send('Survey API is running'));
+
+// app.use('/auth', authRoutes);
+// app.use('/surveys', surveyRoutes);
+// app.use('/surveys', responseRoutes); // /:id/responses, /:id/results
+
+// app.use(errorHandler);
+
+// const port = process.env.PORT || 3000;
+// connectDB(process.env.MONGODB_URI)
+//   .then(() => app.listen(port, () => console.log(`🚀 Server at http://localhost:${port}`)))
+//   .catch(err => {
+//     console.error('❌ DB connect error:', err);
+//     process.exit(1);
+//   });
