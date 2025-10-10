@@ -4,3 +4,4 @@ node_modules
 *.log
 survey-be/.env
 survey-fe/.env
+aws.doc.txt
