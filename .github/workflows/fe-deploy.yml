@@ -19,10 +19,12 @@ jobs:
           node-version: 20
 
       - name: Build FE
-        working-directory: ./survey-fe   # đổi nếu thư mục FE khác
+        working-directory: ./survey-fe
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
         run: |
           npm ci
-          echo "VITE_API_URL=http://<alb-survey-740854700.ap-southeast-1.elb.amazonaws.com>" > .env.production
+          echo "VITE_API_URL=$API_BASE_URL" > .env.production
           npm run build
 
       - name: Configure AWS
