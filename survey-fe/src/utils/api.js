@@ -5,6 +5,8 @@ const api = axios.create({
   baseURL: (import.meta.env.VITE_API_URL || "http://localhost:80").replace(/\/+$/,""),
 });
 
+console.log("API baseURL =", api.defaults.baseURL);
+
 api.interceptors.request.use((config) => {
   const raw = localStorage.getItem("access_token");
   if (raw) {
