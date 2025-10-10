@@ -22,7 +22,7 @@ jobs:
         working-directory: ./survey-fe   # đổi nếu thư mục FE khác
         run: |
           npm ci
-          echo "VITE_API_URL=http://<ALB-DNS-hoặc-URL-API>" > .env.production
+          echo "VITE_API_URL=http://<alb-survey-740854700.ap-southeast-1.elb.amazonaws.com>" > .env.production
           npm run build
 
       - name: Configure AWS
