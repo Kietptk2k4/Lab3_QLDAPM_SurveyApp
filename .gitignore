@@ -5,3 +5,4 @@ node_modules
 survey-be/.env
 survey-fe/.env
 aws.doc.txt
+instruction.txt
