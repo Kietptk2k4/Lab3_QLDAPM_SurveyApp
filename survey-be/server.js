@@ -31,6 +31,7 @@ console.log("ENV check:", {
 });
 
 app.get("/", (req, res) => res.send("API OK"));
+app.get('/healthz', (req,res)=>res.status(200).send('ok'));
 
 // Mount routes
 app.use("/auth", authRoutes);
@@ -39,7 +40,7 @@ app.use("/surveys", surveyRoutes);
 // 404 JSON (đỡ bị "Cannot POST /..."):
 app.use((req, res) => res.status(404).json({ message: "Not found", path: req.originalUrl }));
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 80;
 
 // Bắt lỗi kết nối DB rõ ràng:
 mongoose.connect(process.env.MONGODB_URI)

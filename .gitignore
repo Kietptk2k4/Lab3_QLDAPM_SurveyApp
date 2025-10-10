@@ -1,0 +1,6 @@
+# .gitignore (root)
+node_modules
+.env
+*.log
+survey-be/.env
+survey-fe/.env

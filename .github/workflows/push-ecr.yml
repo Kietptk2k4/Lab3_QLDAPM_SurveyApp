@@ -1,0 +1,31 @@
+# .github/workflows/push-ecr.yml
+name: Build & Push to ECR
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+      IMAGE_TAG: latest   # hoặc ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./survey-be   # đổi đúng thư mục chứa Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

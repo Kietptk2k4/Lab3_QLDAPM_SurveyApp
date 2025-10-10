@@ -1,0 +1,45 @@
+name: BE CI/CD - ECS Fargate
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REGISTRY: 822078811864.dkr.ecr.ap-southeast-1.amazonaws.com
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  IMAGE_TAG: latest
+  ECS_CLUSTER: survey-cluster
+  ECS_SERVICE: survey-be
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./survey-be          # <== repo của bạn
+          file: ./survey-be/Dockerfile  # <== Dockerfile trong survey-be/
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+
+      - name: Force new deployment
+        run: |
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment \
+            --region $AWS_REGION
