@@ -5,6 +5,8 @@
 > **CI/CD**: GitHub Actions  
 > **Quan sát**: CloudWatch Logs/Alarms/Dashboard + X-Ray
 
+
+**Link Demo**: http://survey-fe-build-cua-nhom-3-ku-dep-trzoai.s3-website-ap-southeast-1.amazonaws.com/
 ---
 
 ## 1) Kiến trúc hệ thống
@@ -14,46 +16,46 @@
 ```mermaid
 flowchart LR
   subgraph Client["Người dùng"]
-    U[Browser]
+    U[Trình duyệt]
   end
 
-  subgraph FE["Frontend"]
-    CF[CloudFront\n(dùng SSL/Cache)]
-    S3[S3 Bucket\nsurvey-fe-build-cua-nhom-3-ku-dep-trzoai]
+  subgraph FE["Frontend (S3 + CloudFront)"]
+    CF[CloudFront<br/>SSL + Cache]
+    S3[S3 Bucket<br/>survey-fe-build-cua-nhom-3-ku-dep-trzoai]
   end
 
   subgraph BE["Backend (ECS Fargate)"]
-    ALB[ALB\nHTTP/HTTPS]
-    ECS[ECS Service/Task\nNode.js Express]
+    ALB[ALB<br/>HTTP/HTTPS]
+    ECS[ECS Service/Task<br/>Node.js Express]
     CWL[(CloudWatch Logs)]
     XR[(AWS X-Ray)]
   end
 
-  DB[(MongoDB\n(Atlas/Other))]
+  DB[(MongoDB<br/>Atlas/khác)]
 
   U <---> CF
   CF --> S3
-
   U --> ALB
   ALB --> ECS
   ECS --> DB
-
   ECS --> CWL
   ECS --> XR
+
 
 
 ### 1.2 CI/CD pipeline
 flowchart LR
   Dev[Developer] -->|git push main| GH[GitHub]
-  GH -->|Actions| GA_FE[workflow: fe-deploy.yml]
-  GA_FE -->|build| FE_Build[Vite build]
-  FE_Build -->|aws s3 sync| S3
-  GA_FE -->|invalidate| CF
 
-  GH -->|Actions| GA_BE[workflow: be-deploy.yml]
-  GA_BE -->|docker build/push| ECR[(Amazon ECR)]
-  GA_BE -->|update service| ECS
-  ECS --> ALB
+  GH -->|Actions| FEWF[fe-deploy.yml]
+  FEWF -->|Vite build| BuildFE[Build FE]
+  BuildFE -->|aws s3 sync| S3[S3 Bucket]
+  FEWF -->|cloudfront create-invalidation| CF[CloudFront]
+
+  GH -->|Actions| BEWF[be-deploy.yml]
+  BEWF -->|docker build & push| ECR[(Amazon ECR)]
+  BEWF -->|ecs update-service| ECS[ECS Service]
+  ECS --> ALB[ALB]
 
 ## 2) Cấu trúc repo
 
@@ -158,17 +160,15 @@ Dashboard survey-overview & Alarms, X-Ray Service map/Traces.
 
 
 ## 6) Chạy cục bộ
-Backend
-cd survey-be
-npm i
-npm run dev
-# .env: MONGODB_URI, JWT_SECRET, PORT=80, ALLOW_ORIGIN=https://<cloudfront-domain>
+#### Backend
+\ncd survey-be
+\nnpm i
+\nnpm run dev
 
-Frontend
-cd survey-fe
-npm i
-npm run dev
-# .env.development: VITE_API_URL=http://alb-survey-740854700.ap-southeast-1.elb.amazonaws.com
+#### Frontend
+\ncd survey-fe
+\nnpm i
+\nnpm run dev
 
 ## Ghi chú
 
