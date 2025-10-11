@@ -11,6 +11,53 @@ SurveyApp là một dự án **full-stack** được xây dựng nhằm cung c�
 # 📁Link Web Demo:
  http://survey-fe-build-cua-nhom-3-ku-dep-trzoai.s3-website-ap-southeast-1.amazonaws.com/
 
+##  Kiến trúc AWS (High level)
+
+```mermaid
+flowchart LR
+  subgraph Client["Người dùng"]
+    U[Trình duyệt]
+  end
+
+  subgraph FE["Frontend (S3 + CloudFront)"]
+    CF[CloudFront<br/>SSL + Cache]
+    S3[S3 Bucket<br/>survey-fe-build-cua-nhom-3-ku-dep-trzoai]
+  end
+
+  subgraph BE["Backend (ECS Fargate)"]
+    ALB[ALB<br/>HTTP/HTTPS]
+    ECS[ECS Service/Task<br/>Node.js Express]
+    CWL[(CloudWatch Logs)]
+    XR[(AWS X-Ray)]
+  end
+
+  DB[(MongoDB<br/>Atlas/khác)]
+
+  U <---> CF
+  CF --> S3
+  U --> ALB
+  ALB --> ECS
+  ECS --> DB
+  ECS --> CWL
+  ECS --> XR
+```
+
+###  CI/CD pipeline
+```mermaid
+flowchart LR
+  Dev[Developer] -->|git push main| GH[GitHub]
+
+  GH -->|Actions| FEWF[fe-deploy.yml]
+  FEWF -->|Vite build| BuildFE[Build FE]
+  BuildFE -->|aws s3 sync| S3[S3 Bucket]
+  FEWF -->|cloudfront create-invalidation| CF[CloudFront]
+
+  GH -->|Actions| BEWF[be-deploy.yml]
+  BEWF -->|docker build & push| ECR[(Amazon ECR)]
+  BEWF -->|ecs update-service| ECS[ECS Service]
+  ECS --> ALB[ALB]
+```
+
 ## ✨ Tính năng nổi bật
 
   * **👨‍💻 Quản lý Tài khoản:**
